@@ -55,3 +55,6 @@ Se escoge un personaje para realizar una noticia comunitaria, tambien permite ac
 # Deploy en Android y github (15 puntos)
 • Generar la apk y subirla al repositorio correspondiente de github con el readme detallado
 respectivo.
+
+![image](https://github.com/user-attachments/assets/767f3a8f-f928-414e-8ce3-0585f73ae109)
+
