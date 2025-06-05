@@ -1,0 +1,25 @@
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  img {
+    object-fit: cover;
+    border: 2px solid var(--ion-color-primary);
+  }
+}
+
+ion-card {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+ion-spinner {
+  margin-right: 8px;
+}

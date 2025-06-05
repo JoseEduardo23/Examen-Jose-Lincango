@@ -1,0 +1,124 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Foro Comunitario</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-button (click)="logout()" color="danger" expand="block">
+  <ion-icon name="log-out" slot="start"></ion-icon>
+  Cerrar Sesión
+</ion-button>
+
+<ion-content class="ion-padding">
+  <div class="post-form">
+    <ion-textarea
+      [(ngModel)]="message" 
+      placeholder="Escribe tu mensaje..." 
+      [disabled]="isLoading"
+      rows="5"
+    ></ion-textarea>
+    
+    <div class="preview" *ngIf="photoPreview">
+      <img [src]="photoPreview" class="preview-image">
+    </div>
+    
+    <div class="actions">
+      <ion-button (click)="takePicture()" fill="clear">
+        <ion-icon name="camera-outline" slot="start"></ion-icon>
+        Cámara
+      </ion-button>
+      
+      <ion-button (click)="getLocation()" fill="clear">
+        <ion-icon name="location-outline" slot="start"></ion-icon>
+        Ubicación
+      </ion-button>
+      
+      <ion-button (click)="fetchCharacters()" fill="clear">
+        <ion-icon icon={cameraOutline} slot="start"></ion-icon>
+        Personajes
+      </ion-button>
+    </div>
+    
+    <div *ngIf="latitude && longitude" class="location-info">
+      <ion-chip color="success">
+        <ion-icon name="location"></ion-icon>
+        <ion-label>{{ latitude | number:'1.4-4' }}, {{ longitude | number:'1.4-4' }}</ion-label>
+      </ion-chip>
+    </div>
+    
+    <div class="form-actions">
+      <ion-button (click)="isEditing ? cancelEdit() : resetForm()" fill="outline">
+        {{ isEditing ? 'Cancelar' : 'Limpiar' }}
+      </ion-button>
+      
+      <ion-button (click)="savePost()" [disabled]="isLoading">
+        <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+        <span *ngIf="!isLoading">{{ isEditing ? 'Actualizar' : 'Publicar' }}</span>
+      </ion-button>
+    </div>
+  </div>
+
+  <div class="characters-section" *ngIf="showCharacters">
+    <h3>Selecciona un personaje</h3>
+    <div class="characters-list">
+      <div *ngFor="let character of characters" class="character-item" (click)="selectCharacter(character)">
+        <img [src]="character.image" [alt]="character.name" class="character-image">
+        <div class="character-info">
+          <h4>{{ character.name }}</h4>
+          <p>{{ character.species }} - {{ character.status }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pagination-controls" *ngIf="showCharacters">
+  <ion-button (click)="prevPage()" [disabled]="currentPage === 1 || apiLoading">
+    <ion-icon name="chevron-back-outline"></ion-icon>
+    Anterior
+  </ion-button>
+  
+  <span class="page-info">Página {{ currentPage }} de {{ totalPages }}</span>
+  
+  <ion-button (click)="nextPage()" [disabled]="!hasNextPage || apiLoading">
+    Siguiente
+    <ion-icon name="chevron-forward-outline"></ion-icon>
+  </ion-button>
+</div>
+
+  <div class="posts-list">
+    <h3>Publicaciones recientes</h3>
+    <div *ngFor="let post of posts" class="post-item">
+      <div class="post-header">
+        <img [src]="post.userPhotoURL || 'assets/user-default.webp'" [alt]="post.username" class="user-avatar">
+        <div class="user-info">
+          <h4>{{ post.username }}</h4>
+          <small>{{ post.createdAt?.toDate() | date:'medium' }}</small>
+        </div>
+        
+        <ion-button *ngIf="post.uid === firebaseService.auth.currentUser?.uid" 
+                   fill="clear" size="small" (click)="editPost(post)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+      </div>
+      
+      <div class="post-content">
+        <p>{{ post.message }}</p>
+        
+        <!-- Mostrar imagen si existe -->
+        <img *ngIf="post.photoURL" [src]="post.photoURL" class="post-image">
+        
+        <!-- Mostrar ubicación si existe -->
+        <div *ngIf="post.location" class="post-location">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>{{ post.location.lat | number:'1.4-4' }}, {{ post.location.lng | number:'1.4-4' }}</span>
+        </div>
+        
+        <div *ngIf="post.characterInfo" class="character-card">
+          <img [src]="post.characterInfo.image" [alt]="post.characterInfo.name" class="character-thumb">
+          <div class="character-details">
+            <strong>{{ post.characterInfo.name }}</strong>
+            <div>{{ post.characterInfo.species }} - {{ post.characterInfo.status }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
